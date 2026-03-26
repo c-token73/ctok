@@ -1,0 +1,15 @@
+[package]
+name = "csm-python"
+version = "4.0.0"
+edition = "2021"
+description = "PyO3 Python bindings for CSM++ v4.0"
+license = "MIT OR Apache-2.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+csm-core = { path = "../csm-core" }
+csm-api = { path = "../csm-api" }
+pyo3.workspace = true
+serde.workspace = true

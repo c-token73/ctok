@@ -1,0 +1,15 @@
+(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)
+(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)
+(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)
+(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15)
+_::<impl Deserialize<'de> for AnomalyComponents>::deserialize::__Field
+_::<impl Deserialize<'de> for CsmData>::deserialize::__Field
+_::<impl Deserialize<'de> for CsmLineHeader>::deserialize::__Field
+_::<impl Deserialize<'de> for FeatureVector>::deserialize::__Field
+_::<impl Deserialize<'de> for NamedSlot>::deserialize::__Field
+_::<impl Deserialize<'de> for SemanticRecord>::deserialize::__Field
+_::<impl Deserialize<'de> for SlotStats>::deserialize::__Field
+_::<impl Deserialize<'de> for Token<'a>>::deserialize::__Field
+_::<impl Deserialize<'de> for TokenKind>::deserialize::__Field
+pattern::_::<impl Deserialize<'de> for pattern::DomainKind>::deserialize::__Field
+pattern::_::<impl Deserialize<'de> for pattern::Pattern>::deserialize::__Field

@@ -1,0 +1,12 @@
+[package]
+name = "csm-semantic"
+version = "4.0.0"
+edition = "2021"
+description = "Semantic layer and feature engineering for CSM++ v4.0"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+csm-core = { path = "../csm-core" }
+arrow2.workspace = true
+serde.workspace = true
+rustc-hash.workspace = true

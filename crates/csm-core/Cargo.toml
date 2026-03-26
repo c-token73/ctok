@@ -1,0 +1,17 @@
+[package]
+name = "csm-core"
+version = "4.0.0"
+edition = "2021"
+description = "Core algorithm for CSM++ v4.0 semantic compression"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+fst.workspace = true
+bumpalo.workspace = true
+rustc-hash.workspace = true
+smallvec = { version = "1.13", features = ["serde"] }
+serde = { workspace = true, features = ["derive"] }
+bincode.workspace = true
+thiserror = "1.0"
+crc32fast.workspace = true
+statrs.workspace = true

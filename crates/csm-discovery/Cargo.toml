@@ -1,0 +1,12 @@
+[package]
+name = "csm-discovery"
+version = "4.0.0"
+edition = "2021"
+description = "Pattern discovery for CSM++ v4.0"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+csm-core = { path = "../csm-core" }
+rand.workspace = true
+statrs.workspace = true
+serde.workspace = true

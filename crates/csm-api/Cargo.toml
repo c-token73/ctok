@@ -1,0 +1,24 @@
+[package]
+name = "csm-api"
+version = "4.0.0"
+edition = "2021"
+description = "Public Rust API and CLI for CSM++ v4.0"
+license = "MIT OR Apache-2.0"
+
+[[bin]]
+name = "csm"
+path = "src/bin/main.rs"
+
+[dependencies]
+csm-core = { path = "../csm-core" }
+csm-tokenizer = { path = "../csm-tokenizer" }
+csm-encoding = { path = "../csm-encoding" }
+csm-semantic = { path = "../csm-semantic" }
+csm-streaming = { path = "../csm-streaming" }
+clap = { workspace = true, features = ["derive"] }
+tracing.workspace = true
+tracing-subscriber.workspace = true
+serde.workspace = true
+bincode.workspace = true
+tokio.workspace = true
+anyhow = "1.0"

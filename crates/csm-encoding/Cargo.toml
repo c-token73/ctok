@@ -1,0 +1,11 @@
+[package]
+name = "csm-encoding"
+version = "4.0.0"
+edition = "2021"
+description = "Bit-packing and file format for CSM++ v4.0"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+csm-core = { path = "../csm-core" }
+crc32fast.workspace = true
+serde.workspace = true

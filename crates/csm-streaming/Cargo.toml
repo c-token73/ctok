@@ -1,0 +1,13 @@
+[package]
+name = "csm-streaming"
+version = "4.0.0"
+edition = "2021"
+description = "Streaming and Kafka integration for CSM++ v4.0"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+csm-core = { path = "../csm-core" }
+rdkafka.workspace = true
+axum.workspace = true
+tokio.workspace = true
+serde.workspace = true
