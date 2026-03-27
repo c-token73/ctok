@@ -1,3 +1,0 @@
-error: connection failed
-warning: timeout occurred
-info: processing complete

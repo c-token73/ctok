@@ -1,5 +1,0 @@
-error: connection failed from 192.168.1.1
-warning: timeout occurred at 2024-01-01T12:00:00
-info: processing complete for user123
-error: connection failed from 10.0.0.1
-warning: timeout occurred at 2024-01-01T12:01:00

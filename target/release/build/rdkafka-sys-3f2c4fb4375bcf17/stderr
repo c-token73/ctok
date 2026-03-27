@@ -1,4 +1,0 @@
-Building and linking librdkafka statically
-Running command: "cp -a librdkafka/. /workspaces/ctok/target/release/build/rdkafka-sys-3f2c4fb4375bcf17/out" in dir: .
-Running command: "/workspaces/ctok/target/release/build/rdkafka-sys-3f2c4fb4375bcf17/out/configure --disable-ssl --disable-gssapi --disable-curl --disable-zstd --disable-lz4-ext" in dir: /workspaces/ctok/target/release/build/rdkafka-sys-3f2c4fb4375bcf17/out
-Running command: "make libs" in dir: /workspaces/ctok/target/release/build/rdkafka-sys-3f2c4fb4375bcf17/out

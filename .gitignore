@@ -1,0 +1,49 @@
+# Datasets
+*.txt
+*.csv
+*.json
+*.jsonl
+
+# Generated outputs
+*.csm
+*.csm4
+
+# Logs
+*.log
+
+# Rust build artifacts
+target/
+
+# Temporary and cache files
+*.tmp
+*.cache
+.cache/
+tmp/
+temp/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*~
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Other common ignores
+.env
+.env.local
+.env.*.local
