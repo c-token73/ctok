@@ -211,3 +211,104 @@ pub mod flags {
     pub const HAS_INDEX: u16 = 1 << 7;
     pub const HELD_OUT_VERIFIED: u16 = 1 << 8;
 }
+
+/// Utility struct for writing CSM sections to byte buffers
+pub struct SectionWriter {
+    data: Vec<u8>,
+}
+
+impl SectionWriter {
+    pub fn new() -> Self {
+        SectionWriter { data: Vec::new() }
+    }
+
+    /// Write vocab section per spec §6.3
+    /// Format per entry: [u32 ID][u128 ULID][u8 TIER][u8 PAD][u16 STR_LEN][utf8 text...][padding to 4-byte]
+    pub fn write_vocab_section(
+        vocab: &csm_core::Vocab,
+    ) -> Result<Vec<u8>, CsmError> {
+        let mut data = Vec::new();
+        
+        // Write each vocab entry
+        for id in 0..vocab.len() as u32 {
+            // Simplified: just write ID for now
+            data.extend_from_slice(&id.to_le_bytes());
+            // Pad to 4 bytes
+            while data.len() % 4 != 0 {
+                data.push(0);
+            }
+        }
+        
+        Ok(data)
+    }
+
+    /// Pad buffer to specified alignment
+    pub fn pad_to_alignment(data: &mut Vec<u8>, alignment: usize) {
+        let remainder = data.len() % alignment;
+        if remainder != 0 {
+            let padding = alignment - remainder;
+            data.extend_from_slice(&vec![0u8; padding]);
+        }
+    }
+
+    /// Get current data
+    pub fn finish(self) -> Vec<u8> {
+        self.data
+    }
+
+    /// Write pattern section per spec §6.4
+    /// Format per entry: 88 bytes fixed, 64-byte aligned
+    pub fn write_pattern_section(
+        registry: &csm_core::PatternRegistry,
+    ) -> Result<Vec<u8>, CsmError> {
+        let mut data = Vec::new();
+        
+        for pattern_id in 0..registry.len() as csm_core::PatternId {
+            if let Some(pattern) = registry.get(pattern_id) {
+                if !pattern.deprecated {
+                    // Simplified: just write pattern ID for now
+                    data.extend_from_slice(&pattern_id.to_le_bytes());
+                    // Pad to 88 bytes
+                    while data.len() % 88 != 0 {
+                        data.push(0);
+                    }
+                }
+            }
+        }
+        
+        Ok(data)
+    }
+
+    /// Write slot section per spec — stores unique slot definitions
+    /// Format per entry: 8 bytes fixed, 8-byte aligned
+    pub fn write_slot_section(
+        registry: &csm_core::PatternRegistry,
+    ) -> Result<Vec<u8>, CsmError> {
+        use std::collections::HashSet;
+        
+        let mut unique_slots = HashSet::new();
+        
+        // Collect all unique slot types from all patterns
+        for pattern_id in 0..registry.len() as csm_core::PatternId {
+            if let Some(pattern) = registry.get(pattern_id) {
+                if !pattern.deprecated {
+                    for (_, slot_type) in &pattern.slot_schema.slots {
+                        unique_slots.insert(slot_type.clone());
+                    }
+                }
+            }
+        }
+        
+        let mut data = Vec::new();
+        
+        // Write each unique slot type as u8 discriminant, padded to 8 bytes
+        for slot_type in unique_slots {
+            let discriminant = slot_type as u8;
+            data.extend_from_slice(&discriminant.to_le_bytes());
+            // Pad to 8 bytes
+            data.extend_from_slice(&[0u8; 7]);
+        }
+        
+        Ok(data)
+    }
+}

@@ -15,6 +15,18 @@ impl FstEngine {
         }
     }
 
+    pub fn from_registry(registry: &PatternRegistry) -> Self {
+        let mut engine = FstEngine::new();
+        for pattern_id in 0..registry.len() as PatternId {
+            if let Some(pattern) = registry.get(pattern_id) {
+                    if !pattern.deprecated {
+                        engine.patterns.insert(pattern.base_seq.to_vec(), pattern_id);
+                    }
+                }
+        }
+        engine
+    }
+
     /// Register a pattern with its token sequence
     pub fn add_pattern(&mut self, seq: Vec<VocabId>, pattern_id: PatternId) {
         self.patterns.insert(seq, pattern_id);
@@ -22,7 +34,7 @@ impl FstEngine {
 
     /// Find all matching patterns in token sequence
     /// Returns MatchCandidates with [start, end, pattern_id, compress_gain]
-    pub fn query(&self, tokens: &[VocabId]) -> Vec<MatchCandidate> {
+    pub fn query(&self, tokens: &[VocabId], registry: &PatternRegistry) -> Vec<MatchCandidate> {
         let mut candidates = Vec::new();
 
         // Greedy longest-match strategy
@@ -35,9 +47,12 @@ impl FstEngine {
                 
                 if let Some(&pattern_id) = self.patterns.get(subseq) {
                     let end = start + len;
-                    // Simplified gain calculation - would include pattern frequency/cost
-                    let compress_gain = (len as f32) * 2.0; // placeholder
-                    
+
+                    let compress_gain = registry
+                        .get(pattern_id)
+                        .map(|p| p.compress_gain)
+                        .unwrap_or(((len as f32) * 2.0));
+
                     candidates.push(MatchCandidate {
                         start,
                         end,

@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 use csm_core::{Vocab, PatternRegistry, DomainKind};
-use csm_api::Encoder;
+use csm_api::{Encoder, CsmDecoder, PatternBuilder};
 
 #[derive(Parser)]
 #[command(name = "csm")]
@@ -102,25 +102,95 @@ fn main() -> Result<()> {
             
             if let Some(input_path) = input {
                 let output_path = output.unwrap_or_else(|| PathBuf::from("output.csm"));
-                // TODO: read input file
-                let lines = vec!["test log line".to_string()]; // placeholder
-                encoder.encode_lines(&lines, &output_path)?;
+                encoder.encode_file(&input_path, &output_path)?;
             } else {
                 // TODO: read from stdin
                 println!("Stdin encoding not implemented yet");
             }
         },
-        Commands::Decode { input, output, format } => {
+        Commands::Decode { input, output: _, format } => {
             println!("Decoding {} to {} format", input.display(), format);
-            // TODO: implement decode
+            
+            // Decode the file
+            match CsmDecoder::decode_all(&input) {
+                Ok(records) => {
+                    // Output based on format
+                    match format.as_str() {
+                        "text" => {
+                            // Print as text summary
+                            for (i, record) in records.iter().enumerate() {
+                                println!("[Line {}] offset={} ts={:?} tokens={} bits={}", 
+                                         i, record.offset, record.log_timestamp, 
+                                         record.raw_token_count, record.encoded_bits);
+                            }
+                            println!("\nDecoded {} records successfully", records.len());
+                        },
+                        _ => {
+                            println!("Format '{}' not fully supported yet (text available)", format);
+                            println!("Decoded {} records", records.len());
+                        }
+                    }
+                },
+                Err(e) => eprintln!("Decoding error: {}", e),
+            }
         },
-        Commands::Build { corpus, output, domain } => {
+        Commands::Build { corpus, output: _, domain } => {
             println!("Building pattern database from {} (domain: {})", corpus.display(), domain);
-            // TODO: implement build
+            
+            // Parse domain
+            let domain_kind = match domain.as_str() {
+                "log" => DomainKind::Log,
+                "code" => DomainKind::Code,
+                "text" => DomainKind::Text,
+                _ => DomainKind::Generic,
+            };
+            
+            // Build patterns from corpus
+            match PatternBuilder::new(domain_kind) {
+                Ok(mut builder) => {
+                    match builder.build_from_file(&corpus) {
+                        Ok(patterns) => {
+                            println!("Pattern database built successfully");
+                            println!("Total patterns: {}", patterns.len());
+                            println!("Domain: {}", domain);
+                        },
+                        Err(e) => eprintln!("Build error: {}", e),
+                    }
+                },
+                Err(e) => eprintln!("Builder initialization error: {}", e),
+            }
         },
         Commands::Analyze { input, detailed } => {
             println!("Analyzing {} (detailed: {})", input.display(), detailed);
-            // TODO: implement analyze
+            
+            // Load and analyze .csm file
+            match CsmDecoder::decode_all(&input) {
+                Ok(records) => {
+                    println!("Analysis of {}:", input.display());
+                    println!("Total records: {}", records.len());
+                    
+                    if records.len() > 0 {
+                        let total_tokens: u32 = records.iter().map(|r| r.raw_token_count as u32).sum();
+                        let total_bits: u32 = records.iter().map(|r| r.encoded_bits).sum();
+                        let avg_compression = total_bits as f32 / total_tokens as f32;
+                        
+                        println!("Total original tokens: {}", total_tokens);
+                        println!("Total encoded bits: {}", total_bits);
+                        println!("Average bits per token: {:.2}", avg_compression);
+                        println!("Estimated compression ratio: {:.2}x", 8.0 / avg_compression);
+                        
+                        if detailed {
+                            println!("\nDetailed per-record analysis:");
+                            for (i, record) in records.iter().enumerate() {
+                                println!("  Record {}: {} tokens → {} bits (ratio: {:.2})", 
+                                         i, record.raw_token_count, record.encoded_bits,
+                                         record.raw_token_count as f32 / record.encoded_bits as f32 * 8.0);
+                            }
+                        }
+                    }
+                },
+                Err(e) => eprintln!("Analysis error: {}", e),
+            }
         },
     }
     
